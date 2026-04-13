@@ -172,14 +172,6 @@ Ejects from Create React App configuration (this is a one-way operation).
 - Event management and RSVP
 - Community discussions
 
-## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-Copyright (c) 2024 Red Black Tree
 
----
-
-**Version**: 0.1.0
-
-For more information or to report issues, please contact the development team.
