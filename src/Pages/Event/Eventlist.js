@@ -194,104 +194,107 @@ const Eventlist = () => {
             <h1 className="toto">Event List</h1>
           </div>
           <div className="col-6">
-          <div className={`modal ${showInputBoxModal ? 'd-block' : 'd-none'}`} tabIndex="-1" role="dialog">
-      <div className="modal-dialog" role="document">
-        <div className="modal-content bg-light">
-          <div className="modal-header">
-            <h5 className="modal-title">Event List</h5>
-            <button type="button" className="close" onClick={() => setShowInputBoxModal(false)}>
-              <span>&times;</span>
-            </button>
-          </div>
-          <div className="modal-body">
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="title">Event Title</label>
-                <input type="text" className="form-control" id="title" value={formData.title} onChange={handleChange} />
-              </div>
-              <div className="form-group">
-                <label htmlFor="Description">Description</label>
-                <input type="text" className="form-control" id="Description" value={formData.Description} onChange={handleChange} />
-              </div>
-              <div className="form-group">
-                <label htmlFor="type">Type</label>
-                <input type="text" className="form-control" id="type" value={formData.type} onChange={handleChange} />
-              </div>
-              <div className="form-group">
-                <label htmlFor="address">Address</label>
-                <input type="text" className="form-control" id="address" value={formData.address} onChange={handleChange} />
-              </div>
-              <div className="form-group">
-                <label htmlFor="start_date">Start Date</label>
-                <input type="date" className="form-control" id="start_date" value={formData.start_date} onChange={handleChange} />
-              </div>
-              <div className="form-group">
-                <label htmlFor="end_date">End Date</label>
-                <input type="date" className="form-control" id="end_date" value={formData.end_date} onChange={handleChange} />
-              </div>
-              <div className="form-group">
-                <label htmlFor="start_time">Start Time</label>
-                <input type="time" className="form-control" id="start_time" value={formData.start_time} onChange={handleChange} />
-              </div>
-              <div className="form-group">
-                <label htmlFor="end_time">End Time</label>
-                <input type="time" className="form-control" id="end_time" value={formData.end_time} onChange={handleChange} />
-              </div>
-              <div className="inputBox " style={{ width: "100%" }}>
-                        <select className='form-control' name="division" id="division" onChange={handleChange}>
-                            <option value="">Select Division</option>
-                            {divisions.map((division) => (
-                                <option key={division} value={division}>
-                                    {division}
-                                </option>
-                            ))}
-                        </select>
+            <Modal show={showInputBoxModal} onHide={() => setShowInputBoxModal(false)} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+              <Modal.Header closeButton className="bg-primary text-white border-0 planner-modal-header" style={{ padding: '1.25rem 1.5rem' }}>
+                <Modal.Title className="fs-5 fw-bold"><i className="fas fa-calendar-plus me-2"></i>Create Event</Modal.Title>
+              </Modal.Header>
+              <Modal.Body className="planner-modal-body" style={{ padding: '1.5rem 2rem' }}>
+                <form id="event-create-form" onSubmit={handleSubmit} className="planner-form">
+                  <div className="planner-form-grid">
+                    <div className="planner-field">
+                      <label htmlFor="title" className="planner-label">Event Title</label>
+                      <input type="text" className="form-control planner-input" id="title" value={formData.title} onChange={handleChange} required />
                     </div>
-                    { districts && (
-                        <div className="inputBox" style={{width:"100%"}}>
-                            <select  className='form-control'  name="district" id="district" onChange={handleChange}>
-                                <option value="">Select District</option>
-                                {districts.map((district) => (
-                                    <option key={district} value={district}>
-                                        {district}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+
+                    <div className="planner-field">
+                      <label htmlFor="Description" className="planner-label">Description</label>
+                      <input type="text" className="form-control planner-input" id="Description" value={formData.Description} onChange={handleChange} required />
+                    </div>
+
+                    <div className="planner-field">
+                      <label htmlFor="type" className="planner-label">Type</label>
+                      <input type="text" className="form-control planner-input" id="type" value={formData.type} onChange={handleChange} required />
+                    </div>
+
+                    <div className="planner-field">
+                      <label htmlFor="address" className="planner-label">Address</label>
+                      <input type="text" className="form-control planner-input" id="address" value={formData.address} onChange={handleChange} required />
+                    </div>
+
+                    <div className="planner-date-row">
+                      <div className="planner-field">
+                        <label htmlFor="start_date" className="planner-label">Start Date</label>
+                        <input type="date" className="form-control planner-input" id="start_date" value={formData.start_date} onChange={handleChange} required />
+                      </div>
+                      <div className="planner-field">
+                        <label htmlFor="end_date" className="planner-label">End Date</label>
+                        <input type="date" className="form-control planner-input" id="end_date" value={formData.end_date} onChange={handleChange} required />
+                      </div>
+                    </div>
+
+                    <div className="planner-date-row">
+                      <div className="planner-field">
+                        <label htmlFor="start_time" className="planner-label">Start Time</label>
+                        <input type="time" className="form-control planner-input" id="start_time" value={formData.start_time} onChange={handleChange} required />
+                      </div>
+                      <div className="planner-field">
+                        <label htmlFor="end_time" className="planner-label">End Time</label>
+                        <input type="time" className="form-control planner-input" id="end_time" value={formData.end_time} onChange={handleChange} required />
+                      </div>
+                    </div>
+
+                    <div className="planner-field">
+                      <label htmlFor="division" className="planner-label">Division</label>
+                      <select className='form-control planner-input' name="division" id="division" onChange={handleChange}>
+                        <option value="">Select Division</option>
+                        {divisions.map((division) => (
+                          <option key={division} value={division}>{division}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {districts && (
+                      <div className="planner-field">
+                        <label htmlFor="district" className="planner-label">District</label>
+                        <select className='form-control planner-input' name="district" id="district" onChange={handleChange}>
+                          <option value="">Select District</option>
+                          {districts.map((district) => (
+                            <option key={district} value={district}>{district}</option>
+                          ))}
+                        </select>
+                      </div>
                     )}
 
                     {upazilas && (
-                        <div className="inputBox" style={{width:"100%"}}>
-                            <select className='form-control'  name="thana" id="thana" onChange={handleChange}>
-                                <option value="">Select Thana/Upazila</option>
-                                {upazilas.map((upazila) => (
-                                    <option key={upazila} value={upazila}>
-                                        {upazila}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                      <div className="planner-field">
+                        <label htmlFor="thana" className="planner-label">Thana/Upazila</label>
+                        <select className='form-control planner-input' name="thana" id="thana" onChange={handleChange}>
+                          <option value="">Select Thana/Upazila</option>
+                          {upazilas.map((upazila) => (
+                            <option key={upazila} value={upazila}>{upazila}</option>
+                          ))}
+                        </select>
+                      </div>
                     )}
-              {/* <div className="form-group">
-                <label htmlFor="thana">Thana</label>
-                <input type="text" className="form-control" id="thana" value={formData.thana} onChange={handleChange} />
-              </div> */}
-              <div className="form-group">
-                <label htmlFor="privacy">Privacy</label>
-                <select className="form-control" id="privacy" value={formData.privacy} onChange={handleChange}>
-                  <option value="Bondhu">Bondhu</option>
-                  <option value="Known">Known</option>
-                </select>
-              </div>
-              <button type="submit" className="btn btn-primary mt-2">Save</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+
+                    <div className="planner-field">
+                      <label htmlFor="privacy" className="planner-label">Privacy</label>
+                      <select className="form-control planner-input" id="privacy" value={formData.privacy} onChange={handleChange}>
+                        <option value="Bondhu">Bondhu</option>
+                        <option value="Known">Known</option>
+                      </select>
+                    </div>
+                  </div>
+                </form>
+              </Modal.Body>
+              <Modal.Footer className="planner-modal-footer">
+                <Button variant="secondary" className="event-modal-button event-modal-button-secondary" onClick={() => setShowInputBoxModal(false)}>Close</Button>
+                <Button type="submit" form="event-create-form" className="event-modal-button event-modal-button-primary">Save</Button>
+              </Modal.Footer>
+            </Modal>
             {/* Button to open Input Box Modal */}
             <div style={{ textAlign: 'right' }}>
-              <Button className="mew" onClick={handleInputBoxButtonClick}>Add New Event</Button>
+              <Button className="event-cta-button" onClick={handleInputBoxButtonClick}>Add New Event</Button>
             </div>
           </div>
         </div>
@@ -322,62 +325,62 @@ const Eventlist = () => {
                 <td>{user.start_time}</td>
                 <td>{user.end_time}</td>
                 {user.E_creator == userData.username && (
-                  <td><Button variant="primary" onClick={() => submitrequest(user)}>Owner</Button></td>
+                  <td><Button variant="primary" className="event-status-button event-status-owner" onClick={() => submitrequest(user)}>Owner</Button></td>
               )}
               {user.Member == 1  && !(user.E_creator == userData.username) &&(
-                  <td><Button variant="success" onClick={() => submitrequest(user)} >Member</Button></td>
+                  <td><Button variant="success" className="event-status-button event-status-member" onClick={() => submitrequest(user)} >Member</Button></td>
               )}
               {user.member == 1 && user.not_ac == 1 && (
-                <td><Button style={{ backgroundColor: 'blue', color: 'white' }} onClick={() => submitrequest(user)}>Requested</Button></td>
+                <td><Button className="event-status-button event-status-requested" onClick={() => submitrequest(user)}>Requested</Button></td>
               )} 
               {user.member == 1 && user.cancel == 1 && (
-                <td><Button variant="gray" onClick={() => submitrequest(user)}>Cancel</Button></td>
+                <td><Button variant="light" className="event-status-button event-status-cancel" onClick={() => submitrequest(user)}>Cancel</Button></td>
             )}
               {(user.E_creator != userData.username && user.Member == 0) && (
-                  <td><Button variant="primary" onClick={() => submitrequest(user)}>Join</Button></td>
+                  <td><Button variant="primary" className="event-status-button event-status-join" onClick={() => submitrequest(user)}>Join</Button></td>
               )}
 
-              <td><Button variant="info" onClick={() => handleUserInfoClick(user)}>View Info</Button></td>
+              <td><Button variant="info" className="event-status-button event-status-info" onClick={() => handleUserInfoClick(user)}>View Info</Button></td>
               </tr>
             ))}
           </tbody>
         </table>
         {/* User Info Modal */}
-        <Modal show={showUserInfoModal} onHide={handleClose} dialogClassName="custom-modal" >
+        <Modal show={showUserInfoModal} onHide={handleClose} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
          {/* <div className="bg-light"> */}
-          <Modal.Header closeButton>
-            <Modal.Title>User Info</Modal.Title>
+          <Modal.Header closeButton className="bg-primary text-white border-0 event-modal-header" style={{ padding: '1.5rem' }}>
+            <Modal.Title className="fs-5 fw-bold"><i className="fas fa-calendar-alt me-2"></i>Event Details</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-  <Tabs defaultActiveKey="details">
+          <Modal.Body className="event-modal-body" style={{ padding: '2rem' }}>
+  <Tabs defaultActiveKey="details" className="event-tabs" mountOnEnter>
  {/* {userData && selectedUser && userData.username == selectedUser.E_creator && (
              <Tab eventKey="request" title="Request">
                   <RequestList fmembers={fetchmembers} user={selectedUser} />
                   </Tab>
                 )} */}
-    <Tab eventKey="details" title="Details">
+    <Tab eventKey="details" title="Details" tabClassName="event-tab">
       {selectedUser && (
-        <div>
-          <p><strong>Name:</strong> {selectedUser.E_creator}</p>
-          <p><strong>Type:</strong> {selectedUser.E_type}</p>
-          <p><strong>Location:</strong> {selectedUser.Address}</p>
-          <p><strong>Thana:</strong> {selectedUser.Thana}</p>
-          <p><strong>Description:</strong> {selectedUser.Description}</p>
-          <p><strong>Start Date:</strong> {selectedUser.start_date}</p>
-          <p><strong>End Date:</strong> {selectedUser.end_date}</p>
-          <p><strong>Start Time:</strong> {selectedUser.start_time}</p>
-          <p><strong>End Time:</strong> {selectedUser.end_time}</p>
-          <p><strong>Privacy:</strong> {selectedUser.privacy}</p>
+        <div className="event-detail-grid">
+          <div className="event-detail-card"><span className="event-detail-label">Name</span><strong>{selectedUser.E_creator}</strong></div>
+          <div className="event-detail-card"><span className="event-detail-label">Type</span><strong>{selectedUser.E_type}</strong></div>
+          <div className="event-detail-card"><span className="event-detail-label">Location</span><strong>{selectedUser.Address}</strong></div>
+          <div className="event-detail-card"><span className="event-detail-label">Thana</span><strong>{selectedUser.Thana}</strong></div>
+          <div className="event-detail-card event-detail-card-wide"><span className="event-detail-label">Description</span><strong>{selectedUser.Description}</strong></div>
+          <div className="event-detail-card"><span className="event-detail-label">Start Date</span><strong>{selectedUser.start_date}</strong></div>
+          <div className="event-detail-card"><span className="event-detail-label">End Date</span><strong>{selectedUser.end_date}</strong></div>
+          <div className="event-detail-card"><span className="event-detail-label">Start Time</span><strong>{selectedUser.start_time}</strong></div>
+          <div className="event-detail-card"><span className="event-detail-label">End Time</span><strong>{selectedUser.end_time}</strong></div>
+          <div className="event-detail-card"><span className="event-detail-label">Privacy</span><strong>{selectedUser.privacy}</strong></div>
         </div>
       )}
     </Tab>
-    <Tab eventKey="members" title="Members">
-      {selectedUser && <MemberList members={members} />}
+    <Tab eventKey="members" title="Members" tabClassName="event-tab">
+      {selectedUser && <div className="event-members-panel"><MemberList members={members} /></div>}
     </Tab>
   </Tabs>
 </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>Close</Button>
+            <Button variant="secondary" className="event-modal-button event-modal-button-secondary" onClick={handleClose}>Close</Button>
           </Modal.Footer>
           {/* </div> */}
         </Modal>

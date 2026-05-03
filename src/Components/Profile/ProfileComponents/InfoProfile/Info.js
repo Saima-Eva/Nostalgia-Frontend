@@ -6,9 +6,7 @@ import WorkOutlineRoundedIcon from '@mui/icons-material/WorkOutlineRounded';
 import Info3 from '../../../../assets/Info-Dp/img-3.jpg';
 import { IoCameraOutline } from 'react-icons/io5';
 import { BiMessage, BiLogOut } from 'react-icons/bi';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserFriends } from '@fortawesome/free-solid-svg-icons';
-import { FaCheckCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaUserFriends } from 'react-icons/fa';
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 import { useNavigate } from 'react-router-dom';
 import './Info.css';
@@ -21,6 +19,7 @@ import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import { useEffect } from 'react';
 import PhoneIcon from '@mui/icons-material/Phone'; // Import phone icon
 import PersonIcon from '@mui/icons-material/Person'; // Import gender icon
+import { useUser } from '../../../../context/UserContext';
 
 const Info = ({
   userPostData,
@@ -36,6 +35,7 @@ const Info = ({
   const [coverImg, setCoverImg] = useState(Info3);
   const importProfile = useRef();
   const importCover = useRef();
+  const { clearUserData } = useUser();
 
   const handleFile1 = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -56,12 +56,18 @@ const Info = ({
   const user = JSON.parse(localStorage.getItem('userData'));
 const navigate = useNavigate();
   const logoutUser = () => {
-    // Remove 'userData' from localStorage or perform logout actions
-    localStorage.removeItem('userData');
-    console.log("logout "+user.username);
-    // localStorage.clear();
-    navigate('/')
-    // Add other logout logic here
+    try {
+      // Clear all user data from context and localStorage
+      clearUserData();
+      localStorage.clear();
+      console.log("Logged out user: " + (user?.username || 'unknown'));
+      // Redirect to login page
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Still redirect even if there's an error
+      navigate('/login', { replace: true });
+    }
   };
   const add_fnf = async () => {
     try {
@@ -157,7 +163,7 @@ return (
             ) : (
               userData && userData.img_privacy === 0 ? (
                 <Link to={`/compare/${userData.username}`} className="logout">
-                     <FontAwesomeIcon icon={faUserFriends} />
+                     <FaUserFriends />
                     Compare Image
                 </Link>
               ) : null
@@ -176,21 +182,21 @@ return (
             (userData.type != null && userData.type == "Sent" && userData.good==1) ? (
               <Link to='' onClick={delete_fnd}>
                 <button>
-                  <FontAwesomeIcon icon={faUserFriends} />
+                  <FaUserFriends />
                   {userData.type}
                 </button>
               </Link>
             ) : (userData.is_fnf==1) ? (
               <Link to=''>
                 <button>
-                  <FontAwesomeIcon icon={faUserFriends} />
+                  <FaUserFriends />
                   {userData.type}
                 </button>
               </Link>
             ) : (
               <Link to='' >
                     <button onClick={add_fnf}>
-                  <FontAwesomeIcon icon={faUserFriends} />
+                  <FaUserFriends />
                   Request Now
                   </button>
 

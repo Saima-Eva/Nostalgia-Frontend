@@ -174,180 +174,196 @@ const Triplist = () => {
             <h1 className="toto">Trip List</h1>
           </div>
           <div className="col-6">
-            {showInputBoxModal && (
-              <div className="modal show d-block" tabIndex="-1" role="dialog">
-                <div className="modal-dialog" role="document">
-                  <div className="modal-content" style={{ backgroundColor: 'white' }}>
-                    <div className="modal-header">
-                      <h5 className="modal-title">New Trip</h5>
-                      <button type="button" className="close" aria-label="Close" onClick={() => setShowInputBoxModal(false)}>
-                        <span aria-hidden="true">&times;</span>
-                      </button>
+            <Modal show={showInputBoxModal} onHide={() => setShowInputBoxModal(false)} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+              <Modal.Header closeButton className="bg-primary text-white border-0 trip-modal-header" style={{ padding: '1.25rem 1.5rem' }}>
+                <Modal.Title className="fs-5 fw-bold"><i className="fas fa-plus-circle me-2"></i>Create Trip</Modal.Title>
+              </Modal.Header>
+              <Modal.Body className="trip-modal-body" style={{ padding: '1.5rem 2rem' }}>
+                <form id="trip-create-form" onSubmit={handleSubmit} className="trip-form">
+                  <div className="trip-form-grid">
+                    <div className="trip-field">
+                      <label htmlFor="trip_name" className="trip-label">Trip Name</label>
+                      <input
+                        type="text"
+                        className="form-control trip-input"
+                        id="trip_name"
+                        name="trip_name"
+                        placeholder="e.g. Annual Winter Tour"
+                        value={formData.trip_name}
+                        onChange={handleChange}
+                        required
+                      />
                     </div>
-                    <div className="modal-body">
-                      <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                          <label htmlFor="trip_name">Trip Name</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="trip_name"
-                            name="trip_name"
-                            value={formData.trip_name}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="address">Destination</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="address"
-                            name="address"
-                            value={formData.address}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="start_date">Start Date</label>
-                          <input
-                            type="date"
-                            className="form-control"
-                            id="start_date"
-                            name="start_date"
-                            value={formData.start_date}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="end_date">End Date</label>
-                          <input
-                            type="date"
-                            className="form-control"
-                            id="end_date"
-                            name="end_date"
-                            value={formData.end_date}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="guide">Guide</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="guide"
-                            name="guide"
-                            value={formData.guide}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="privacy">Privacy</label>
-                          <select
-                            className="form-control"
-                            id="privacy"
-                            name="privacy"
-                            value={formData.privacy}
-                            onChange={handleChange}
-                          >
-                            <option value="Bondhu">Bondhu</option>
-                            <option value="Known">Known</option>
-                          </select>
-                        </div>
-                        <button type="submit" className="btn btn-primary mew mt-2">Save</button>
-                      </form>
+
+                    <div className="trip-field">
+                      <label htmlFor="address" className="trip-label">Destination</label>
+                      <input
+                        type="text"
+                        className="form-control trip-input"
+                        id="address"
+                        name="address"
+                        placeholder="e.g. Cox's Bazar"
+                        value={formData.address}
+                        onChange={handleChange}
+                        required
+                      />
                     </div>
-                  </div>
-                </div>
-              </div>
-            )}
-            {showEditBoxModal && (
-              <div className="modal show d-block" tabIndex="-1" role="dialog">
-                <div className="modal-dialog" role="document">
-                  <div className="modal-content" style={{ backgroundColor: 'white' }}>
-                    <div className="modal-header">
-                      <h5 className="modal-title">Edit Trip</h5>
-                      <button type="button" className="close" aria-label="Close" onClick={() => setShowEditBoxModal(false)}>
-                        <span aria-hidden="true">&times;</span>
-                      </button>
+
+                    <div className="trip-date-row">
+                      <div className="trip-field">
+                        <label htmlFor="start_date" className="trip-label">Start Date</label>
+                        <input
+                          type="date"
+                          className="form-control trip-input"
+                          id="start_date"
+                          name="start_date"
+                          value={formData.start_date}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                      <div className="trip-field">
+                        <label htmlFor="end_date" className="trip-label">End Date</label>
+                        <input
+                          type="date"
+                          className="form-control trip-input"
+                          id="end_date"
+                          name="end_date"
+                          value={formData.end_date}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
                     </div>
-                    <div className="modal-body">
-                      <form onSubmit={handleEditSubmit}>
-                        <div className="form-group">
-                          <label htmlFor="trip_name">Trip Name</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="trip_name"
-                            name="trip_name"
-                            value={formData.trip_name}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="address">Destination</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="address"
-                            name="address"
-                            value={formData.address}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="start_date">Start Date</label>
-                          <input
-                            type="date"
-                            className="form-control"
-                            id="start_date"
-                            name="start_date"
-                            value={formData.start_date}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="end_date">End Date</label>
-                          <input
-                            type="date"
-                            className="form-control"
-                            id="end_date"
-                            name="end_date"
-                            value={formData.end_date}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="guide">Guide</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="guide"
-                            name="guide"
-                            value={formData.guide}
-                            onChange={handleChange}
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="privacy">Privacy</label>
-                          <select
-                            className="form-control"
-                            id="privacy"
-                            name="privacy"
-                            value={formData.privacy}
-                            onChange={handleChange}
-                          >
-                            <option value="Bondhu">Bondhu</option>
-                            <option value="Known">Known</option>
-                          </select>
-                        </div>
-                        <button type="submit" className="btn btn-primary mew mt-2">Save</button>
-                      </form>
+
+                    <div className="trip-field">
+                      <label htmlFor="guide" className="trip-label">Guide</label>
+                      <input
+                        type="text"
+                        className="form-control trip-input"
+                        id="guide"
+                        name="guide"
+                        placeholder="Guide name"
+                        value={formData.guide}
+                        onChange={handleChange}
+                      />
+                    </div>
+
+                    <div className="trip-field">
+                      <label htmlFor="privacy" className="trip-label">Privacy</label>
+                      <select
+                        className="form-control trip-input"
+                        id="privacy"
+                        name="privacy"
+                        value={formData.privacy}
+                        onChange={handleChange}
+                      >
+                        <option value="Bondhu">Bondhu</option>
+                        <option value="Known">Known</option>
+                      </select>
                     </div>
                   </div>
-                </div>
-              </div>
-            )}
+                </form>
+              </Modal.Body>
+              <Modal.Footer className="trip-modal-footer">
+                <Button variant="secondary" onClick={() => setShowInputBoxModal(false)}>Close</Button>
+                <Button type="submit" form="trip-create-form" className="mew">Save</Button>
+              </Modal.Footer>
+            </Modal>
+
+            <Modal show={showEditBoxModal} onHide={() => setShowEditBoxModal(false)} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+              <Modal.Header closeButton className="bg-warning text-white border-0 trip-modal-header" style={{ padding: '1.25rem 1.5rem' }}>
+                <Modal.Title className="fs-5 fw-bold"><i className="fas fa-edit me-2"></i>Edit Trip</Modal.Title>
+              </Modal.Header>
+              <Modal.Body className="trip-modal-body" style={{ padding: '1.5rem 2rem' }}>
+                <form id="trip-edit-form" onSubmit={handleEditSubmit} className="trip-form">
+                  <div className="trip-form-grid">
+                    <div className="trip-field">
+                      <label htmlFor="trip_name" className="trip-label">Trip Name</label>
+                      <input
+                        type="text"
+                        className="form-control trip-input"
+                        id="trip_name"
+                        name="trip_name"
+                        value={formData.trip_name}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="trip-field">
+                      <label htmlFor="address" className="trip-label">Destination</label>
+                      <input
+                        type="text"
+                        className="form-control trip-input"
+                        id="address"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="trip-date-row">
+                      <div className="trip-field">
+                        <label htmlFor="start_date" className="trip-label">Start Date</label>
+                        <input
+                          type="date"
+                          className="form-control trip-input"
+                          id="start_date"
+                          name="start_date"
+                          value={formData.start_date}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                      <div className="trip-field">
+                        <label htmlFor="end_date" className="trip-label">End Date</label>
+                        <input
+                          type="date"
+                          className="form-control trip-input"
+                          id="end_date"
+                          name="end_date"
+                          value={formData.end_date}
+                          onChange={handleChange}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="trip-field">
+                      <label htmlFor="guide" className="trip-label">Guide</label>
+                      <input
+                        type="text"
+                        className="form-control trip-input"
+                        id="guide"
+                        name="guide"
+                        value={formData.guide}
+                        onChange={handleChange}
+                      />
+                    </div>
+
+                    <div className="trip-field">
+                      <label htmlFor="privacy" className="trip-label">Privacy</label>
+                      <select
+                        className="form-control trip-input"
+                        id="privacy"
+                        name="privacy"
+                        value={formData.privacy}
+                        onChange={handleChange}
+                      >
+                        <option value="Bondhu">Bondhu</option>
+                        <option value="Known">Known</option>
+                      </select>
+                    </div>
+                  </div>
+                </form>
+              </Modal.Body>
+              <Modal.Footer className="trip-modal-footer">
+                <Button variant="secondary" onClick={() => setShowEditBoxModal(false)}>Close</Button>
+                <Button type="submit" form="trip-edit-form" className="mew">Save</Button>
+              </Modal.Footer>
+            </Modal>
             <div style={{ textAlign: 'right' }}>
               <Button className="mew" onClick={handleInputBoxButtonClick}>Add New Trip</Button>
             </div>
@@ -400,12 +416,12 @@ const Triplist = () => {
             ))}
           </tbody>
         </table>
-        <Modal show={showUserInfoModal} onHide={handleClose} dialogClassName="custom-modal">
+        <Modal show={showUserInfoModal} onHide={handleClose} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
           <div className="bg-light">
-            <Modal.Header closeButton>
-              <Modal.Title>User Info</Modal.Title>
+            <Modal.Header closeButton className="bg-primary text-white border-0" style={{ padding: '1.5rem' }}>
+              <Modal.Title className="fs-5 fw-bold"><i className="fas fa-suitcase me-2"></i>Trip Details</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body style={{ padding: '2rem' }}>
               <Tabs defaultActiveKey="details">
                 {userData && selectedUser && userData.username === selectedUser.creator && (
                   <Tab eventKey="request" title="Request">

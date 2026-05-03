@@ -5,11 +5,27 @@ const ComparePage = () => {
   const [rightImage, setRightImage] = useState(null);
 
   const handleLeftImageUpload = (e) => {
-    setLeftImage(URL.createObjectURL(e.target.files[0]));
+    try {
+      if (e.target.files && e.target.files.length > 0) {
+        setLeftImage(URL.createObjectURL(e.target.files[0]));
+      } else {
+        console.warn('No file selected for left image');
+      }
+    } catch (error) {
+      console.error('Error uploading left image:', error);
+    }
   };
 
   const handleRightImageUpload = (e) => {
-    setRightImage(URL.createObjectURL(e.target.files[0]));
+    try {
+      if (e.target.files && e.target.files.length > 0) {
+        setRightImage(URL.createObjectURL(e.target.files[0]));
+      } else {
+        console.warn('No file selected for right image');
+      }
+    } catch (error) {
+      console.error('Error uploading right image:', error);
+    }
   };
 
   const handleCompare = () => {

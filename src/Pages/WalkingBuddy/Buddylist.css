@@ -33,6 +33,71 @@
 
       .custom-modal .modal-content {
         background-color: white;
-      }      
+      }
+
+.planner-modal-header {
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.planner-modal-body {
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.planner-form {
+  width: 100%;
+}
+
+.planner-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.planner-date-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.planner-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.planner-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.planner-input {
+  border: 1px solid #dbe2ea !important;
+  border-radius: 12px !important;
+  background-color: #ffffff !important;
+  min-height: 44px;
+  padding: 0.65rem 0.85rem !important;
+  font-size: 1rem;
+  color: #1f2937;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.planner-input:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+}
+
+.planner-modal-footer {
+  background-color: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+@media (max-width: 768px) {
+  .planner-date-row {
+    grid-template-columns: 1fr;
+  }
+}
 
       

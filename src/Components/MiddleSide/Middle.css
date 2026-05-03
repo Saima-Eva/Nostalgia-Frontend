@@ -1,23 +1,42 @@
 
-@media screen and (max-width:1024px){
-    .M-features{
-        width:100%;
+.M-features {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media screen and (max-width:1024px) {
+    .M-features {
+        width: 100%;
         margin-bottom: 100px;
     }
 }
 
-@media screen and (max-width:768px){
-    .M-features{
+@media screen and (max-width:768px) {
+    .M-features {
         min-width: 100%;
         padding-left: 0px;
         padding-right: 0px;
         padding-bottom: 85px;
         margin-bottom: 100px;
-        
     }
 }
-@media screen and (max-width:430px){
-    .M-features{
+
+@media screen and (max-width:430px) {
+    .M-features {
         min-width: 100%;
         padding-left: 0px;
         padding-right: 0px;

@@ -6,6 +6,7 @@ import { Modal, Button, Form} from 'react-bootstrap';
 import api from '../../../util/api';
 
 const Overseer = () => {
+  const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     username: '',
     first_name: '',
@@ -16,7 +17,17 @@ const Overseer = () => {
     Location: '',
     Relation: ''
   });
-  const user= JSON.parse(localStorage.getItem('userData'));
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('userData');
+      const userData = stored ? JSON.parse(stored) : null;
+      setUser(userData);
+    } catch (err) {
+      console.error('Error parsing userData in Overseer:', err);
+      setUser(null);
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,10 +40,16 @@ const Overseer = () => {
   const [selectedUser, setSelectedUser] = useState(null);
 
   useEffect(() => {
-    fetchOverseerList();
-  }, []);
+    if (user && user.username) {
+      fetchOverseerList();
+    }
+  }, [user]);
   
   const fetchOverseerList = () => {
+    if (!user || !user.username) {
+      console.warn('User data not available for fetching overseer list');
+      return;
+    }
     axios.get(`${api.url}:8000/overseerlist`, {
       params: {
         target: user.username
@@ -123,8 +140,18 @@ const Overseer = () => {
   const [additionalInfo, setAdditionalInfo] = useState({
     type: '',
     content: '',
-    username:user.username
+    username: user?.username || ''
   });
+
+  // Update additionalInfo when user changes
+  useEffect(() => {
+    if (user?.username) {
+      setAdditionalInfo(prev => ({
+        ...prev,
+        username: user.username
+      }));
+    }
+  }, [user]);
 
   // Function to handle changes in the additional info form
   const handleAdditionalChange = (e) => {
@@ -150,7 +177,7 @@ const Overseer = () => {
     setAdditionalInfo({
       type: '',
       content: '',
-      username:user.username
+      username: user?.username || ''
     });
     // Close the additional info modal
     
@@ -176,11 +203,11 @@ const Overseer = () => {
           </div>
         </div>
       ))}
-     <Modal show={showAdditionalModal} onHide={() => setShowAdditionalModal(false)}    dialogClassName="custom-modal">
-        <Modal.Header closeButton >
-          <Modal.Title>Add Additional Info</Modal.Title>
+     <Modal show={showAdditionalModal} onHide={() => setShowAdditionalModal(false)} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+        <Modal.Header closeButton className="bg-primary text-white border-0" style={{ padding: '1.5rem' }}>
+          <Modal.Title className="fs-5 fw-bold"><i className="fas fa-plus-circle me-2"></i>Add Additional Info</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ padding: '2rem' }}>
           <Form>
             <Form.Group controlId="type">
               <Form.Label>Type</Form.Label>
@@ -199,18 +226,18 @@ const Overseer = () => {
             </Form.Group>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowAdditionalModal(false)}>Close</Button>
-          <Button variant="primary" onClick={handleSubmitAdditionalInfo}>Save</Button>
+        <Modal.Footer className="bg-light border-top" style={{ padding: '1rem 2rem' }}>
+          <Button variant="secondary" onClick={() => setShowAdditionalModal(false)} className="fw-bold"><i className="fas fa-times me-2"></i>Close</Button>
+          <Button variant="primary" onClick={handleSubmitAdditionalInfo} className="fw-bold"><i className="fas fa-save me-2"></i>Save</Button>
         </Modal.Footer>
       </Modal>
 
 
-      <Modal show={showModal} onHide={handleCloseModal} centered scrollable dialogClassName="custom-modal">
-        <Modal.Header closeButton>
-          <Modal.Title>Add Overseer</Modal.Title>
+      <Modal show={showModal} onHide={handleCloseModal} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+        <Modal.Header closeButton className="bg-primary text-white border-0" style={{ padding: '1.5rem' }}>
+          <Modal.Title className="fs-5 fw-bold"><i className="fas fa-user-plus me-2"></i>Add Overseer</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ padding: '2rem' }}>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="username">
               <Form.Label>Username</Form.Label>
@@ -245,16 +272,19 @@ const Overseer = () => {
               <Form.Control as="textarea" name="Location" value={formData.Location} onChange={handleChange} />
             </Form.Group>
             {/* Add other form fields similarly */}
-            <Button variant="primary" type="submit" className="mt-2">Submit</Button>
+            <Button variant="primary" type="submit" className="mt-4 w-100 fw-bold"><i className="fas fa-plus me-2"></i>Add Overseer</Button>
           </Form>
         </Modal.Body>
+        <Modal.Footer className="bg-light border-top" style={{ padding: '1rem 2rem' }}>
+          <Button variant="secondary" onClick={handleCloseModal} className="fw-bold"><i className="fas fa-times me-2"></i>Close</Button>
+        </Modal.Footer>
       </Modal>
 
-      <Modal show={showViewModal} onHide={handleCloseViewModal} centered scrollable dialogClassName="custom-modal">
-        <Modal.Header closeButton>
-          <Modal.Title>View Overseer</Modal.Title>
+      <Modal show={showViewModal} onHide={handleCloseViewModal} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+        <Modal.Header closeButton className="bg-info text-white border-0" style={{ padding: '1.5rem' }}>
+          <Modal.Title className="fs-5 fw-bold"><i className="fas fa-user me-2"></i>View Overseer</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ padding: '2rem' }}>
           {/* Display details of the selected overseer */}
           {selectedUser && (
             <div>

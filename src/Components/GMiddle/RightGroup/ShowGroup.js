@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./Overseer.css";
-import { Modal, Button, Form} from 'react-bootstrap';
+import { Modal, Button, Form, Alert} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import api from '../../../util/api';
 
 const ShowGroup = () => {
+  const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     username: '',
     name: '',
@@ -15,7 +16,24 @@ const ShowGroup = () => {
     phone: '',
     email: '',
   });
-  const user= JSON.parse(localStorage.getItem('userData'));
+  const [groupImage, setGroupImage] = useState(null);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('userData');
+      const userData = stored ? JSON.parse(stored) : null;
+      setUser(userData);
+    } catch (err) {
+      console.error('Error parsing userData in ShowGroup:', err);
+      setUser(null);
+    }
+  }, []);
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setGroupImage(e.target.files[0]);
+    }
+  };
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -34,13 +52,19 @@ const ShowGroup = () => {
   const [showModal, setShowModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [alertInfo, setAlertInfo] = useState({ show: false, message: '', variant: 'success' });
 
   useEffect(() => {
-    fetchOverseerList();
-  }, []);
-
+    if (user && user.id) {
+      fetchOverseerList();
+    }
+  }, [user]);
 
   const fetchOverseerList = () => {
+    if (!user || !user.id) {
+      console.warn('User data not available for fetching groups');
+      return;
+    }
     axios.get(`${api.url}:8000/my_groups`, {
       params: {
         user_id: user.id
@@ -61,6 +85,7 @@ const ShowGroup = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setAlertInfo({ show: false, message: '', variant: 'success' });
   };
 
   const handleViewUser = (user) => {
@@ -95,15 +120,24 @@ const ShowGroup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log('Data submitted:', formData);   
-      formData.id=user.id;  
-      formData.username=formData.username; 
-      const response = await axios.post(`${api.url}:8000/add_group`, formData);
+      const submitData = new FormData();
+      submitData.append('id', user.id);
+      submitData.append('username', formData.username);
+      submitData.append('name', formData.name);
+      submitData.append('topic', formData.topic);
+      submitData.append('privacy', formData.privacy || 'Bondhu');
+      if (groupImage) {
+        submitData.append('img', groupImage);
+      }
+      const response = await axios.post(`${api.url}:8000/add_group`, submitData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       if(response.data.msg === "Group already exists"){
-        alert("Group With this Username already exists")
+        setAlertInfo({ show: true, message: "Group With this Username already exists", variant: 'danger' });
         return;
       }
       console.log('Data submitted:', response.data);
+      setAlertInfo({ show: true, message: "Group successfully created!", variant: 'success' });
       setFormData({
         username: '',
         name: '',
@@ -113,9 +147,10 @@ const ShowGroup = () => {
         email: '',
       });
       fetchOverseerList();
-      setShowModal(false);
+      setTimeout(() => setShowModal(false), 2000);
     } catch (error) {
       console.error('Error submitting data:', error);
+      setAlertInfo({ show: true, message: "Failed to create group. Please try again.", variant: 'danger' });
     }
   };
 
@@ -143,133 +178,98 @@ const ShowGroup = () => {
           </div>
         </div>
       ))}
-      <Modal show={showModal} onHide={handleCloseModal} centered scrollable dialogClassName="custom-modal">
-        <Modal.Header closeButton>
-          <Modal.Title>Create Group</Modal.Title>
+      <Modal show={showModal} onHide={handleCloseModal} centered size="xl" fullscreen="lg-down" className="modal-xl-custom" backdrop="static" keyboard={false}>
+        <Modal.Header closeButton className="bg-primary text-white border-0" style={{ padding: '1.5rem' }}>
+          <Modal.Title className="fs-4 fw-bold">Create New Group</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ padding: '2rem', minHeight: '500px' }}>
+          {alertInfo.show && (
+            <Alert variant={alertInfo.variant} onClose={() => setAlertInfo({ ...alertInfo, show: false })} dismissible className="mb-4">
+              {alertInfo.message}
+            </Alert>
+          )}
           <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="username">
-              <Form.Label>Username</Form.Label>
-              <Form.Control type="text" name="username" value={formData.username} onChange={handleChange} />
-            </Form.Group>
-            <Form.Group controlId="name">
-              <Form.Label>Group Name</Form.Label>
-              <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} />
-            </Form.Group>  
-            <Form.Group controlId="topic">
-              <Form.Label>Topic</Form.Label>
-              <Form.Control type="text" name="topic" value={formData.topic} onChange={handleChange} />
-            </Form.Group>  
-            {/* <Form.Group controlId="email">
-              <Form.Label>Email</Form.Label>
-              <Form.Control type="email" name="email" value={formData.email} onChange={handleChange} />
-            </Form.Group>
-            <Form.Group controlId="phone">
-              <Form.Label>Phone</Form.Label>
-              <Form.Control type="text" name="phone" value={formData.phone} onChange={handleChange} />
-            </Form.Group> */}
-            {/* <Form.Group controlId="password">
-              <Form.Label>Password</Form.Label>
-              <Form.Control type="password" name="password" value={formData.password} onChange={handleChange} />
-            </Form.Group> */}
-            <Form.Group controlId="privacy">
-                    <Form.Label>Privacy</Form.Label>
-                    <Form.Control as="select" value={formData.privacy} onChange={handleChange}>
-                      <option value="Bondhu">Bondhu</option>
-                      <option value="Known">Known</option>
-                      <option value="Public">Public</option>
-                    </Form.Control>
-                  </Form.Group>
-            {/* Add other form fields similarly */}
-            <Button variant="primary" type="submit" className="mt-2">Submit</Button>
+            <div className="row">
+              <div className="col-lg-6 mb-4">
+                <Form.Group controlId="username">
+                  <Form.Label className="fw-bold fs-6 mb-2">Group Username</Form.Label>
+                  <Form.Control type="text" name="username" placeholder="e.g., cool_group_123" value={formData.username} onChange={handleChange} required style={{ padding: '0.75rem', fontSize: '1rem' }} />
+                  <Form.Text className="text-muted d-block mt-2">Unique identifier for your group (lowercase, numbers, underscores)</Form.Text>
+                </Form.Group>
+              </div>
+              <div className="col-lg-6 mb-4">
+                <Form.Group controlId="name">
+                  <Form.Label className="fw-bold fs-6 mb-2">Group Name</Form.Label>
+                  <Form.Control type="text" name="name" placeholder="Enter an appealing group name" value={formData.name} onChange={handleChange} required style={{ padding: '0.75rem', fontSize: '1rem' }} />
+                  <Form.Text className="text-muted d-block mt-2">Display name visible to all members</Form.Text>
+                </Form.Group>
+              </div>
+            </div>
+            <div className="mb-4">
+              <Form.Group controlId="topic">
+                <Form.Label className="fw-bold fs-6 mb-2">Group Topic/Description</Form.Label>
+                <Form.Control as="textarea" rows={3} name="topic" placeholder="What is this group about? What are your interests?" value={formData.topic} onChange={handleChange} required style={{ padding: '0.75rem', fontSize: '1rem', resize: 'vertical' }} />
+                <Form.Text className="text-muted d-block mt-2">Brief description to help people understand your group</Form.Text>
+              </Form.Group>
+            </div>
+            <div className="row">
+              <div className="col-lg-6 mb-4">
+                <Form.Group controlId="groupImage">
+                  <Form.Label className="fw-bold fs-6 mb-2">Group Photo</Form.Label>
+                  <div className="border-2 border-dashed p-4 text-center rounded" style={{ borderColor: '#dee2e6', cursor: 'pointer' }}>
+                    <Form.Control type="file" accept="image/*" onChange={handleImageChange} className="d-none" id="file-upload" />
+                    <label htmlFor="file-upload" style={{ cursor: 'pointer', display: 'block' }}>
+                      <div className="mb-2">
+                        <i className="fas fa-image" style={{ fontSize: '2rem', color: '#0d6efd' }}></i>
+                      </div>
+                      <div className="text-muted">Click to upload or drag & drop</div>
+                      <Form.Text className="text-muted d-block mt-2">PNG, JPG, GIF up to 10MB</Form.Text>
+                    </label>
+                  </div>
+                  {formData.image && <div className="mt-3 text-success"><i className="fas fa-check-circle"></i> {formData.image.name}</div>}
+                </Form.Group>
+              </div>
+              <div className="col-lg-6 mb-4">
+                <Form.Group controlId="privacy">
+                  <Form.Label className="fw-bold fs-6 mb-2">Privacy Setting</Form.Label>
+                  <Form.Control as="select" name="privacy" value={formData.privacy} onChange={handleChange} className="form-select" style={{ padding: '0.75rem', fontSize: '1rem' }}>
+                    <option value="Bondhu">Bondhu (Friends only)</option>
+                    <option value="Known">Known (Connections)</option>
+                    <option value="Public">Public (Anyone)</option>
+                    <option value="Private">Private (Invite only)</option>
+                  </Form.Control>
+                  <Form.Text className="text-muted d-block mt-2">Control who can see and join your group</Form.Text>
+                </Form.Group>
+              </div>
+            </div>
+            <div className="d-grid gap-2 mt-5">
+              <Button variant="primary" type="submit" className="py-3 fw-bold shadow-sm" style={{ fontSize: '1.1rem' }}>
+                <i className="fas fa-plus"></i> Create Group
+              </Button>
+            </div>
           </Form>
         </Modal.Body>
       </Modal>
 
-      <Modal show={showViewModal} onHide={handleCloseViewModal} centered scrollable dialogClassName="custom-modal">
-        <Modal.Header closeButton>
-          <Modal.Title>View Overseer</Modal.Title>
+      <Modal show={showViewModal} onHide={handleCloseViewModal} centered size="lg" fullscreen="sm-down" backdrop="static" keyboard={false}>
+        <Modal.Header closeButton className="bg-info text-white">
+          <Modal.Title>User Profile</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          {/* Display details of the selected overseer */}
+        <Modal.Body className="p-4 bg-light">
           {selectedUser && (
-            <div>
-              <div className="card mb-2">
-                <div className="card-body">
-                  <Form.Group controlId="formUsername">
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control type="text" value={selectedUser.username} readOnly />
-                  </Form.Group>
-                </div>
-              </div>
-              <div className="card mb-2">
-                <div className="card-body">
-                  <Form.Group controlId="formFirstName">
-                    <Form.Label>First Name</Form.Label>
-                    <Form.Control type="text" value={selectedUser.first_name} readOnly />
-                  </Form.Group>
-                </div>
-              </div>
-              <div className="card mb-2">
-                <div className="card-body">
-                  <Form.Group controlId="formLastName">
-                    <Form.Label>Last Name</Form.Label>
-                    <Form.Control type="text" value={selectedUser.last_name} readOnly />
-                  </Form.Group>
-                </div>
-              </div>
-            <div className="card mb-2">
-                <div className="card-body">
-                  <Form.Group controlId="formPhone">
-                    <Form.Label>Phone</Form.Label>
-                    <Form.Control type="text" value={selectedUser.phone} readOnly />
-                  </Form.Group>
-                </div>
-              </div>
-               <div className="card mb-2">
-                <div className="card-body">
-                  <Form.Group controlId="formEmail">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" value={selectedUser.email} readOnly />
-                  </Form.Group>
-                </div>
-              </div>
-              {/* <div className="card mb-2">
-                <div className="card-body">
-                  <Form.Group controlId="formPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" value={selectedUser.password} readOnly />
-                  </Form.Group>
-                </div>
-          </div> */}
-               <div className="card mb-2">
-                <div className="card-body">
-                  <Form.Group controlId="formGender">
-                    <Form.Label>Gender</Form.Label>
-                    <Form.Control type="text" value={selectedUser.gender} readOnly />
-                  </Form.Group>
-                </div>
-              </div> 
-              <div className="card mb-2">
-                <div className="card-body">
-                  <Form.Group controlId="formRelation">
-                    <Form.Label>Relation</Form.Label>
-                    <Form.Control type="text" value={selectedUser.relation} readOnly />
-                  </Form.Group>
-                </div>
-              </div>
-              <div className="card mb-2">
-                <div className="card-body">
-                  <Form.Group controlId="formAddress">
-                    <Form.Label>Address</Form.Label>
-                    <Form.Control type="text" value={selectedUser.address} readOnly />
-                  </Form.Group>
-                </div>
+            <div className="container-fluid">
+              <div className="row g-3">
+                <div className="col-md-6"><div className="card shadow-sm h-100"><div className="card-body"><h6 className="text-muted mb-1">Username</h6><p className="fs-5 fw-semibold mb-0">{selectedUser.username}</p></div></div></div>
+                <div className="col-md-6"><div className="card shadow-sm h-100"><div className="card-body"><h6 className="text-muted mb-1">Full Name</h6><p className="fs-5 fw-semibold mb-0">{selectedUser.first_name} {selectedUser.last_name}</p></div></div></div>
+                <div className="col-md-6"><div className="card shadow-sm h-100"><div className="card-body"><h6 className="text-muted mb-1">Phone</h6><p className="fs-5 fw-semibold mb-0">{selectedUser.phone}</p></div></div></div>
+                <div className="col-md-6"><div className="card shadow-sm h-100"><div className="card-body"><h6 className="text-muted mb-1">Email</h6><p className="fs-5 fw-semibold mb-0">{selectedUser.email}</p></div></div></div>
               </div>
             </div>
           )}
         </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseViewModal}>Close</Button>
+        </Modal.Footer>
       </Modal>
       {/* Button to open modal */}
     </div>
@@ -277,3 +277,12 @@ const ShowGroup = () => {
 }
 
 export default ShowGroup;
+
+
+
+
+
+
+
+
+

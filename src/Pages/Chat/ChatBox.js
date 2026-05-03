@@ -33,12 +33,22 @@ const Chat = () => {
     const [newMessage, setNewMessage] = useState('');
     const [search, setSearch] = useState('');
     const [showMenu, setShowMenu] = useState(false);
-    const socket = useSocket(`${api.url}:5000`);
+    // Connect to socket.io through proxy (proxied to localhost:8000)
+    const socket = useSocket(api.url);
     const [lastseen, setLastseen] = useState("");
     const [n,setn]=useState("");
     const [e,sete]=useState("");
     const [d,setd]=useState("");
     const [msg,setmsg]=useState("");
+    
+    // Initialize encryption keys from userData on mount
+    useEffect(() => {
+        if (userData) {
+            if (userData.n) setn(userData.n);
+            if (userData.e) sete(userData.e);
+            if (userData.d) setd(userData.d);
+        }
+    }, [userData]);
     
     useEffect(() => {
         if (fnd && !done) {

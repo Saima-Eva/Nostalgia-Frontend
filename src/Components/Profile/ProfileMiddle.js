@@ -62,6 +62,18 @@ const ProfileMiddle = ({following,
   
 
   const [searchResults,setSearchResults] =useState("")
+  const [user, setUser] = useState(null);
+    
+    useEffect(()=>{
+      try {
+        const stored = localStorage.getItem('userData');
+        const parsedUser = stored ? JSON.parse(stored) : null;
+        setUser(parsedUser);
+      } catch (err) {
+        console.error('Error parsing userData:', err);
+        setUser(null);
+      }
+    }, []);
     
     useEffect(()=>{
       const searchData = userPostData.filter((val)=>(
@@ -91,7 +103,10 @@ const ProfileMiddle = ({following,
         });
     };
 
-const user= JSON.parse(localStorage.getItem('userData'));
+if(!user || !user.username) {
+  return <h2>Loading user data...</h2>;
+}
+
 console.log("you are in profile page");
 console.log(user.username);
 console.log(username)
@@ -128,7 +143,7 @@ if(user.username.includes("@")){
         fetchPosts={fetchPosts}
         />
         )}
-       {(user.username==username) || (userData && userData.is_fnf === 1) ? (
+       {(user && user.username==username) || (userData && userData.is_fnf === 1) ? (
         <UserHome
           fetchPosts={fetchPosts}
           setPosts={setPosts}

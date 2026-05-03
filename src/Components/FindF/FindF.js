@@ -8,9 +8,13 @@ import './FindF.css';
 import img3 from "../../assets/User-post/img3.jpg";
 import { Link } from 'react-router-dom';
 import api from '../../util/api';
-const FindF = ({fndlist,setfndlist,fnd,fetchData}) => { // Destructure props to directly access userData
+
+const FindF = ({fnd,fetchData}) => { // Destructure props to directly access userData
     const userData= JSON.parse(localStorage.getItem('userData'));
     const [selectedOption, setSelectedOption] = React.useState("Accept");
+    
+    // Only render image if profile picture exists
+    const hasProfilePicture = fnd.pp && fnd.pp.trim() !== '';
     const add_fnf = async () => {
       try {
           const response = await axios.post(`${api.url}:8000/add_fnf`, {
@@ -58,7 +62,7 @@ const updatefnf = async (option) => {
           type: option
       });
       alert("Friend Update successfully")
-      fetchData(setfndlist);
+      fetchData();
       console.log(response.data.message); // Log the response message
       // You may update UI state or perform other actions after successful request
   } catch (error) {
@@ -75,14 +79,22 @@ const handleSelect = (option) => {
         return (
         <Card className="text-center card-box" style={{ width: '330px',height: '460px' }}> 
         <Card.Body className="member-card pt-2 pb-2">
+            {hasProfilePicture && (
             <div className="thumb-lg member-thumb mx-auto">
               <img
                 src={`${api.url}:8000/${fnd.pp}`}
                 className="rounded-circle img-thumbnail"
                 alt="profile-image"
-                style={{ width: '200px', height: '200px' }}
+                style={{ width: '200px', height: '200px', objectFit: 'cover' }}
+                loading="lazy"
                 />
             </div>
+            )}
+            {!hasProfilePicture && (
+            <div className="no-image-placeholder">
+              No image available
+            </div>
+            )}
             <div>
               <h4>{fnd.first_name} {fnd.last_name}</h4>
               <p className="text-muted">
@@ -167,4 +179,5 @@ const handleSelect = (option) => {
         </Card>
       );
 };
-export default FindF;
+
+export default React.memo(FindF);

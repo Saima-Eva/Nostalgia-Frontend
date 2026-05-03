@@ -11,7 +11,7 @@ const Homepage = ({posts}) => {
                         posts={posts}
                         /> 
         :
-        (<p style={{textAlign:"center",marginTop:"40px"}}>
+        (<p style={{textAlign:"center",marginTop:"40px", color: "#666"}}>
             NO POSTS ARE HERE
         </p>)
         }

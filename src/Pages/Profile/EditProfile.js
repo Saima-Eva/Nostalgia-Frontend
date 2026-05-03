@@ -79,16 +79,16 @@ const EditProfile = () => {
 
   return (
     <div className='interface'>
-                 <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Unauthorized Access</Modal.Title>
+                 <Modal show={showModal} onHide={handleCloseModal} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+        <Modal.Header closeButton className="bg-danger text-white border-0" style={{ padding: '1.5rem' }}>
+          <Modal.Title className="fs-5 fw-bold"><i className="fas fa-exclamation-circle me-2"></i>Unauthorized Access</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          You are not authorized to edit this profile.
+        <Modal.Body style={{ padding: '2rem' }}>
+          <p className="mb-0">You are not authorized to edit this profile.</p>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleCloseModal}>
-            Close
+        <Modal.Footer className="bg-light border-top" style={{ padding: '1rem 2rem' }}>
+          <Button variant="secondary" onClick={handleCloseModal} className="fw-bold">
+            <i className="fas fa-times me-2"></i>Close
           </Button>
         </Modal.Footer>
       </Modal>

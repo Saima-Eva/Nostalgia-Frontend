@@ -1,95 +1,119 @@
-.replyContainer {
-    margin-top: 10px;
-}
-.overAllCommentList{
-    margin-bottom: 30px;
-    
-}
-.commentList{
-    display: flex;
-    justify-content: space-between;
-}
-.commentHead{
-    display: flex;
-    gap: 15px;
-}
-.commentList .commentList1{
-    width: min-content;
-    display: flex;
-    flex-direction: column;
-    flex: 4;
-}
-.commentList .commentList1 .commentHead span{
-    font-weight: 500;
-    font-size: 20px;
-    padding-right: 10px;
-}
-.commentList .commentList1 .commentHead p{
-    line-height: 23px;
-}
-.commentList .commentList1 img{
-    width: 45px;
-    height: 45px;
-    cursor: pointer;
-    border-radius: 50%;
-    object-fit: cover;
-    object-position: center;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-.commentList2{
-    flex: .5;
-}
-.commentList2 p{
-    text-align: end;
-    color: orangered;
+/* Comments styling - Primary styling is in styled-components in Comments.js */
+
+.commentSection {
+    margin-top: 16px;
+    padding: 16px;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
 }
 
-.commentFooter{
+.cmtGroup {
     display: flex;
-    gap: 15px;
-    padding-left: 60px;
-    color: grey;
-    padding-top: 8px;
-    font-size: 15px;
+    gap: 10px;
+    align-items: center;
+    background: white;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s;
 }
-.commentFooter h4{
-    font-weight: 500;
+
+.cmtGroup:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
-@media screen and (max-width:430px){
-    .overAllCommentList{
-        margin-bottom: 20px;
+
+.cmtGroup input {
+    flex: 1;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 14px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+    background-color: #f3f4f6;
+}
+
+.cmtGroup input::placeholder {
+    color: #9ca3af;
+}
+
+.cmtGroup input:focus {
+    background-color: white;
+    box-shadow: inset 0 0 0 1px #e5e7eb;
+}
+
+.cmtGroup button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    border-radius: 6px;
+    font-size: 18px;
+}
+
+.cmtGroup button:hover {
+    color: #1d4ed8;
+    background-color: rgba(37, 99, 235, 0.08);
+    transform: scale(1.08);
+}
+
+.cmtGroup button:active {
+    transform: scale(0.96);
+}
+
+.send {
+    font-size: 18px;
+}
+
+/* Mobile responsiveness */
+@media screen and (max-width: 640px) {
+    .commentSection {
+        margin-top: 12px;
+        padding: 12px;
     }
-    .commentHead p{
-        display: flex;
-        flex-direction: column;
+
+    .cmtGroup {
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .cmtGroup input {
         font-size: 13px;
+        padding: 8px 12px;
     }
-    .commentList .commentList1 .commentHead span{
-        font-size: 15px;
-        padding-right: 0px;
-        font-weight:500;
+
+    .cmtGroup button {
+        padding: 4px;
+        font-size: 16px;
     }
-    .commentList .commentList1 img{
-        width: 35px;
-        height: 35px;
+}
+
+@media screen and (max-width: 430px) {
+    .commentSection {
+        padding: 10px;
+        border-radius: 8px;
     }
-    .commentHead{
+
+    .cmtGroup {
+        flex-direction: column;
         gap: 10px;
     }
-    .commentList2{
-        flex: .3;
-    }
-    .commentList2 p{
-        text-align: end;
-        color: orangered;
-    }
-    .commentFooter{
-        padding-left: 45px;
-        padding-top: 5px;
+
+    .cmtGroup input {
         font-size: 12px;
+        padding: 8px 10px;
+        width: 100%;
     }
-    .commentList2 svg{
-        font-size: 18px;
+
+    .cmtGroup button {
+        font-size: 16px;
     }
+
 }

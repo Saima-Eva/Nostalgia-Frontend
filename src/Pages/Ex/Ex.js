@@ -30,11 +30,11 @@ const ExamplePage = () => {
           <h1>User List</h1>
       </div>
     <div className="col-6">
-    <Modal show={showInputBoxModal} onHide={() => setShowInputBoxModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Walking List</Modal.Title>
+    <Modal show={showInputBoxModal} onHide={() => setShowInputBoxModal(false)} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+        <Modal.Header closeButton className="bg-primary text-white border-0" style={{ padding: '1.5rem' }}>
+          <Modal.Title className="fs-5 fw-bold"><i className="fas fa-walking me-2"></i>Walking List</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ padding: '2rem' }}>
           <Form>
             <Form.Group controlId="startDate">
               <Form.Label>Start Date</Form.Label>
@@ -65,9 +65,9 @@ const ExamplePage = () => {
             </Form.Group>
           </Form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowInputBoxModal(false)}>Close</Button>
-          <Button variant="primary" onClick={() => setShowInputBoxModal(false)}>Save</Button>
+        <Modal.Footer className="bg-light border-top" style={{ padding: '1rem 2rem' }}>
+          <Button variant="secondary" onClick={() => setShowInputBoxModal(false)} className="fw-bold"><i className="fas fa-times me-2"></i>Close</Button>
+          <Button variant="primary" onClick={() => setShowInputBoxModal(false)} className="fw-bold"><i className="fas fa-save me-2"></i>Save</Button>
         </Modal.Footer>
       </Modal>
 
@@ -106,11 +106,11 @@ const ExamplePage = () => {
       </table>
 
       {/* User Info Modal */}
-      <Modal show={showUserInfoModal} onHide={() => setShowUserInfoModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>User Info</Modal.Title>
+      <Modal show={showUserInfoModal} onHide={() => setShowUserInfoModal(false)} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+        <Modal.Header closeButton className="bg-info text-white border-0" style={{ padding: '1.5rem' }}>
+          <Modal.Title className="fs-5 fw-bold"><i className="fas fa-user me-2"></i>User Information</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ padding: '2rem' }}>
           {selectedUser && (
             <div>
               <p><strong>Name:</strong> {selectedUser.name}</p>

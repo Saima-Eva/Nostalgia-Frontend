@@ -65,6 +65,7 @@ const GroupHome = () => {
   return (
     <div className='interface'>
       <Nav 
+        setPosts={setPosts}
         search={search}
         setSearch={setSearch}
         showMenu={showMenu}

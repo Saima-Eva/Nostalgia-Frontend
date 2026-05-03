@@ -55,18 +55,34 @@ const [nidimg,setnidimg] = useState(null);
     }
   };
   const handlenidchange = (e) => {
-    setnid(URL.createObjectURL(e.target.files[0]));
-    setnidimg(e.target.files[0]);
+    try {
+      if (e.target.files && e.target.files.length > 0) {
+        const file = e.target.files[0];
+        setnid(URL.createObjectURL(file));
+        setnidimg(file);
+      } else {
+        console.warn('No file selected for NID image');
+      }
+    } catch (error) {
+      console.error('Error uploading NID image:', error);
+    }
   };
   const handleInputChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
   const handleImageChange = (e) => {
-    setimg(URL.createObjectURL(e.target.files[0]));
-    //console.log(e.target.files[0]);
-    setUser({ ...user, p_image: e.target.files[0] });
-    console.log(user.p_image);
-   // console.log(user.p_image);
+    try {
+      if (e.target.files && e.target.files.length > 0) {
+        const file = e.target.files[0];
+        setimg(URL.createObjectURL(file));
+        setUser({ ...user, p_image: file });
+        console.log(file);
+      } else {
+        console.warn('No file selected for profile image');
+      }
+    } catch (error) {
+      console.error('Error uploading profile image:', error);
+    }
   };
    const handleSubmit = async (e) => {
     //e.preventDefault();
@@ -76,14 +92,14 @@ const [nidimg,setnidimg] = useState(null);
       console.log("ye kya hai");
       console.log(user);
       Object.entries(user).forEach(([key, value]) => {
+        // Skip p_image if it's not a File (i.e., no new image selected)
         if (key === 'p_image' && !(value instanceof File)) {
-          console.log("No image provided.");
-          return;
+          console.log("No new image provided - keeping existing image.");
+          return; // Skip this field, but continue processing others
         }
         if(key == 'walk_type'){
           console.log("walk type");
           console.log(value);
-
         }
         formData.append(key, value);
       });

@@ -21,7 +21,6 @@ import { AiFillYoutube } from "react-icons/ai";
 import { RxTwitterLogo } from "react-icons/rx";
 import { FiGithub } from "react-icons/fi";
 import axios from 'axios';
-import moment from 'moment';
 import { Modal, Button } from 'react-bootstrap';
 import api from '../../util/api';
 import Comments from '../Comments/Comments';
@@ -48,18 +47,23 @@ const PostUser = ({ posts, post, setPosts, userData }) => {
   const handleCommentInput = (e) => {
     e.preventDefault();
 
+    const trimmedComment = commentInput.trim();
+    if (!trimmedComment) {
+      return;
+    }
+
     const id = comments && comments.length ? comments[comments.length - 1].id + 1 : 1;
-    const profilePic = userData.pp;
-    const username = userData.pp;
-    const comment = commentInput;
-    const time = moment.utc(new Date(), 'yyyy/MM/dd kk:mm:ss').local().startOf('seconds').fromNow();
+    const profilePic = userData.pp || null;
+    const username = userData.username || 'User';
+    const comment = trimmedComment;
+    const time = new Date().toISOString();
     const commentObj = {
       id: id,
-      profilePic: profilePic,
+      author_img: profilePic,
       likes: 0,
-      username: username,
-      comment: comment,
-      time: time
+      author: username,
+      content: comment,
+      time
     };
     const insert = [...comments, commentObj];
     setComments(insert);
@@ -238,22 +242,23 @@ const PostUser = ({ posts, post, setPosts, userData }) => {
         </div>
       </div>
       {/* Edit Modal */}
-      <Modal show={editModalOpen} onHide={() => setEditModalOpen(false)} dialogClassName="custom-modal">
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Post</Modal.Title>
+      <Modal show={editModalOpen} onHide={() => setEditModalOpen(false)} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+        <Modal.Header closeButton className="bg-primary text-white border-0" style={{ padding: '1.5rem' }}>
+          <Modal.Title className="fs-5 fw-bold"><i className="fas fa-edit me-2"></i>Edit Post</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ padding: '2rem' }}>
           <textarea
             className='form-control'
             rows='6'
             cols='100'
             value={editedContent}
             onChange={(e) => setEditedContent(e.target.value)}
+            style={{ resize: 'vertical', fontSize: '1rem', padding: '0.75rem' }}
           />
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setEditModalOpen(false)}>Cancel</Button>
-          <Button variant="primary" onClick={handleUpdate}>Update</Button>
+        <Modal.Footer className="bg-light border-top" style={{ padding: '1rem 2rem' }}>
+          <Button variant="secondary" onClick={() => setEditModalOpen(false)} className="fw-bold"><i className="fas fa-times me-2"></i>Cancel</Button>
+          <Button variant="primary" onClick={handleUpdate} className="fw-bold"><i className="fas fa-save me-2"></i>Update</Button>
         </Modal.Footer>
       </Modal>
     </div>

@@ -3,3 +3,18 @@
     border-color: gray !important; /* Change the border color to gray when disabled */
     color: #fff !important; /* Change the text color to white when disabled */
 }
+
+.no-image-placeholder {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #ddd;
+    font-size: 12px;
+    color: #999;
+    text-align: center;
+    margin: auto;
+}

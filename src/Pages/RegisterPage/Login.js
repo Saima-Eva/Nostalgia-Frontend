@@ -1,212 +1,362 @@
-import React, { useState } from 'react';
-import { FiMail } from 'react-icons/fi';
-import { RiLockPasswordLine } from 'react-icons/ri';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import styled from 'styled-components';
 import { useUser } from '../../context/UserContext';
-import api from '../../util/api';
-import './login.css';
-// import { set } from 'mongoose';
+import { Button, Form, Card, Container } from '../../Components/UI';
+import { theme } from '../../theme/theme';
+import { authAPI } from '../../api/apiService';
+import CookieUtil from '../../util/cookieUtil';
 
-const Login = () => {
-  const setLocalStorageItem = (key, value) => {
-    return new Promise((resolve, reject) => {
-      try {
-        localStorage.setItem(key, JSON.stringify(value));
-        resolve();
-      } catch (error) {
-        reject(error);
-      }
-    });
-  };
-  const getLocalStorageItem = (key) => {
-    return new Promise((resolve, reject) => {
-      try {
-        const item = localStorage.getItem(key);
-        resolve(item ? JSON.parse(item) : null);
-      } catch (error) {
-        reject(error);
-      }
-    });
-  };
+const LoginContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, ${theme.colors.primary} 0%, ${theme.colors.accent} 100%);
+  padding: ${theme.spacing[4]};
+`;
 
-  async function exampleUsage(userdata) {
-    try {
-      await setLocalStorageItem('userData', userdata);
-      console.log('Item set successfully.');
-      const userData = await getLocalStorageItem('userData');
-      console.log('Retrieved item:', userData);
-    } catch (error) {
-      console.error('Error:', error);
+const LoginCard = styled(Card)`
+  width: 100%;
+  max-width: 450px;
+  border-radius: ${theme.borderRadius.lg};
+`;
+
+const Header = styled.div`
+  text-align: center;
+  margin-bottom: ${theme.spacing[8]};
+
+  h1 {
+    font-size: ${theme.typography.fontSize['3xl']};
+    margin: 0 0 ${theme.spacing[2]} 0;
+    color: ${theme.colors.text};
+
+    .highlight {
+      color: ${theme.colors.primary};
+      font-weight: ${theme.typography.fontWeight.bold};
     }
   }
 
+  p {
+    color: ${theme.colors.textLight};
+    margin: 0;
+  }
+`;
+
+const AlertBox = styled.div`
+  padding: ${theme.spacing[3]};
+  background-color: ${theme.colors.errorLight};
+  border-left: 4px solid ${theme.colors.error};
+  border-radius: ${theme.borderRadius.base};
+  margin-bottom: ${theme.spacing[4]};
+  color: ${theme.colors.error};
+  font-size: ${theme.typography.fontSize.sm};
+`;
+
+const FooterLink = styled.div`
+  text-align: center;
+  margin-top: ${theme.spacing[4]};
+  font-size: ${theme.typography.fontSize.sm};
+
+  p {
+    margin: 0;
+    color: ${theme.colors.textLight};
+  }
+
+  a {
+    color: ${theme.colors.primary};
+    font-weight: ${theme.typography.fontWeight.semibold};
+    transition: color ${theme.transitions.fast};
+
+    &:hover {
+      color: ${theme.colors.primaryDark};
+    }
+  }
+`;
+
+const OTPModal = styled.div`
+  display: ${(props) => (props.show ? 'flex' : 'none')};
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  align-items: center;
+  justify-content: center;
+  z-index: ${theme.zIndex.modal};
+`;
+
+const OTPContent = styled.div`
+  background-color: ${theme.colors.background};
+  border-radius: ${theme.borderRadius.lg};
+  padding: ${theme.spacing[6]};
+  max-width: 400px;
+  width: 100%;
+  box-shadow: ${theme.shadows.xl};
+
+  h3 {
+    margin: 0 0 ${theme.spacing[2]} 0;
+    font-size: ${theme.typography.fontSize['2xl']};
+    color: ${theme.colors.text};
+  }
+
+  p {
+    margin: 0 0 ${theme.spacing[4]} 0;
+    color: ${theme.colors.textLight};
+    font-size: ${theme.typography.fontSize.sm};
+  }
+`;
+
+const OTPInput = styled.input`
+  width: 100%;
+  padding: ${theme.spacing[2]} ${theme.spacing[3]};
+  font-size: ${theme.typography.fontSize.lg};
+  letter-spacing: ${theme.typography.letterSpacing.wide};
+  text-align: center;
+  border: 2px solid ${theme.colors.border};
+  border-radius: ${theme.borderRadius.base};
+  font-weight: ${theme.typography.fontWeight.bold};
+  margin-bottom: ${theme.spacing[3]};
+  transition: border-color ${theme.transitions.fast};
+
+  &:focus {
+    outline: none;
+    border-color: ${theme.colors.primary};
+  }
+
+  &:disabled {
+    background-color: ${theme.colors.backgroundTertiary};
+  }
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: ${theme.spacing[2]};
+`;
+
+const Login = () => {
   const navigate = useNavigate();
-  const [error, setError] = useState({});
-  const [submit, setSubmit] = useState(false);
   const { setUserData } = useUser();
   
+  const [error, setError] = useState({});
+  const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [otpInput, setOtpInput] = useState('');
+  const [otpError, setOtpError] = useState('');
   const [serverOtp, setServerOtp] = useState(null);
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
-  const [data, setData] = useState({
+  const [userData, setUserDataLocal] = useState(null);
+  const [loginToken, setLoginToken] = useState(null);
+  const [otpAttempts, setOtpAttempts] = useState(0);
+  
+  const [credentials, setCredentials] = useState({
     username: '',
-    password: '',
-    tt:''
+    password: ''
   });
-  const handleChange = (e) => {
-    const newObj = { ...data, [e.target.name]: e.target.value };
-    setData(newObj);
+
+  useEffect(() => {
+    const existingToken = localStorage.getItem('token');
+    if (existingToken) {
+      navigate('/home');
+    }
+  }, [navigate]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setCredentials(prev => ({ ...prev, [name]: value }));
+    if (error[name]) {
+      setError(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
-  const handleSignUp = async (e) => {
+  const validateForm = () => {
+    const newErrors = {};
+    if (!credentials.username.trim()) {
+      newErrors.username = 'Username is required';
+    }
+    if (!credentials.password) {
+      newErrors.password = 'Password is required';
+    } else if (credentials.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+    return newErrors;
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setError(validationLogin(data));
-    setSubmit(true);
-    // let tt=localStorage.getItem('token');
-    let deviceId = localStorage.getItem('deviceId');
-    if (!deviceId) {
-        deviceId = crypto.randomUUID();
-        localStorage.setItem('deviceId', deviceId);
+    
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setError(validationErrors);
+      return;
     }
-    let tot=deviceId;
-    console.log("this is code");
-    console.log(tot);
-    setData(prevState => ({
-      ...prevState,
-      tt: tot || ''
-    }));
+
+    setLoading(true);
+    setError({});
+
     try {
-      const response = await axios.post(`${api.url}:8000/login`, data);
-      if (response.status === 200) {
-        console.log('login done!');
-        console.log(response.data.otp);
-        setServerOtp(response.data.otp);
-        // setUserData(response.data.user);
-        console.log("this is logged user");
-        console.log(response.data.user);
-        console.log("this is end of userdata");
-        setUser(response.data.user);
-        console.log(response.data.token);
-        setToken(response.data.token);
-        localStorage.setItem('token', response.data.token);
-        exampleUsage(response.data.user);
-        setShowModal(true); 
-        // setOtpInput("1234");
-        // setServerOtp("1234");
-        
+      const result = await authAPI.login(credentials);
+      
+      if (result.auth && result.user) {
+        setUserDataLocal(result.user);
+        setLoginToken(result.token);
+        setServerOtp(result.otp);
+        setOtpAttempts(0);
+        setShowModal(true);
+        setOtpInput('');
       } else {
-        console.log('Invalid Username or Password');
-        setError({ ...error, username: 'Invalid Username or Password' });
-        setError({ ...error, password: 'Invalid Username or Password' });
-
+        setError({ credentials: result.message || 'Login failed' });
       }
-    } catch (error) {
-      console.error('Failed to login:', error.message);
-      setError({ ...error, username: 'Invalid Username or Password' });
-      setError({ ...error, password: 'Invalid Username or Password' });
+    } catch (err) {
+      console.error('Login error:', err);
+      setError({ credentials: 'Login failed. Please try again.' });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleOtpSubmit = () => {
-    // if (otpInput === serverOtp) {
-    if (otpInput) {
-      console.log('OTP matched!');
-      setUserData(user);
-      navigate(`/home`);
+  const handleOtpSubmit = async () => {
+    if (!otpInput.trim()) {
+      setOtpError('OTP is required');
+      return;
+    }
+
+    if (otpAttempts >= 3) {
+      setOtpError('Maximum OTP attempts exceeded. Please login again.');
+      setTimeout(() => {
+        handleCloseModal();
+      }, 2000);
+      return;
+    }
+
+    if (otpInput === String(serverOtp)) {
+      try {
+        setLoading(true);
+        
+        localStorage.setItem('token', loginToken);
+        localStorage.setItem('userData', JSON.stringify(userData));
+        localStorage.setItem('access_token', loginToken);
+        CookieUtil.setCookie('access', loginToken);
+        
+        setUserData(userData);
+        
+        setOtpError('');
+        setShowModal(false);
+        
+        setTimeout(() => {
+          navigate('/home');
+        }, 500);
+      } catch (err) {
+        console.error('OTP verification error:', err);
+        setOtpError('Verification failed. Please try again.');
+      } finally {
+        setLoading(false);
+      }
     } else {
-      alert('Invalid OTP. Please try again.');
+      setOtpAttempts(prev => prev + 1);
+      setOtpError(`Invalid OTP. Attempts remaining: ${3 - otpAttempts - 1}`);
+      setOtpInput('');
     }
   };
 
-  const validationLogin = (data) => {
-    const error = {};
-    const passwordPattern = /^[a-zA-Z0-9!@#\$%\^\&*_=+-]{1,12}$/g;
-
-    if (data.password === '') {
-      error.password = '* Password is Required';
-    } else if (!passwordPattern.test(data.password)) {
-      error.password = '* Password not valid';
-    }
-    return error;
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setOtpInput('');
+    setOtpError('');
+    setOtpAttempts(0);
+    setCredentials({ username: '', password: '' });
   };
 
   return (
-    <div className="container_log">
-      <div className="container-form">
-        <form onSubmit={handleSignUp}>
-          <h1>
-            Login to <span className="highlight">Nos</span>talgia
-          </h1>
-          <p>Please sign in to continue.</p>
-          <div className="inputBox">
-            <FiMail className="mail" />
-            <input
-              type="text"
-              name="username"
-              id="username"
-              onChange={handleChange}
-              placeholder="Username"
-            />
-          </div>
-          {error.username && (
-            <span style={{ color: 'red', display: 'block', marginTop: '5px' }}>
-              {error.username}
-            </span>
-          )}
+    <LoginContainer>
+      <LoginCard>
+        <Card.Body style={{ padding: theme.spacing[6] }}>
+          <Header>
+            <h1>
+              Login to <span className="highlight">Nos</span>talgia
+            </h1>
+            <p>Welcome back! Please sign in to continue.</p>
+          </Header>
 
-          <div className="inputBox">
-            <RiLockPasswordLine className="password" />
-            <input
+          {error.credentials && <AlertBox>{error.credentials}</AlertBox>}
+
+          <Form onSubmit={handleLogin}>
+            <Form.Input
+              label="Username"
+              name="username"
+              placeholder="Enter your username"
+              value={credentials.username}
+              onChange={handleInputChange}
+              error={error.username}
+              disabled={loading}
+              required
+            />
+
+            <Form.Input
+              label="Password"
               type="password"
               name="password"
-              id="password"
-              onChange={handleChange}
-              placeholder="Password"
+              placeholder="Enter your password"
+              value={credentials.password}
+              onChange={handleInputChange}
+              error={error.password}
+              disabled={loading}
+              required
             />
-          </div>
-          {error.password && (
-            <span style={{ color: 'red', display: 'block', marginTop: '5px' }}>
-              {error.password}
-            </span>
-          )}
 
-          <div className="divBtn">
-            <Link to="/forget" className="btn">
-              <small className="FG">Forgot Password?</small>
-            </Link>
-            <button type="submit" className="loginBtn">
-              LOGIN
-            </button>
-          </div>
-        </form>
+            <Button type="submit" fullWidth size="large" disabled={loading}>
+              {loading ? 'LOGGING IN...' : 'LOGIN'}
+            </Button>
+          </Form>
 
-        <div className="dont">
-          <p>
-            Don't have an account? <Link to="/signup"><span>Sign up</span></Link>
-          </p>
-        </div>
-      </div>
+          <FooterLink>
+            <p>
+              Don't have an account? <Link to="/signup">Sign up here</Link>
+            </p>
+          </FooterLink>
+        </Card.Body>
+      </LoginCard>
 
-      {/* OTP Modal */}
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Enter OTP</h3>
-            <input
-              type="text"
-              value={otpInput}
-              onChange={(e) => setOtpInput(e.target.value)}
-              placeholder="Enter OTP"
-            />
-            <button onClick={handleOtpSubmit}>Submit</button>
-            <button onClick={() => setShowModal(false)}>Cancel</button>
-          </div>
-        </div>
-      )}
-    </div>
+      <OTPModal show={showModal}>
+        <OTPContent>
+          <h3>Verify OTP</h3>
+          <p>An OTP has been sent to your registered email. Enter it below to continue.</p>
+          
+          <OTPInput
+            type="text"
+            value={otpInput}
+            onChange={(e) => {
+              setOtpInput(e.target.value);
+              setOtpError('');
+            }}
+            placeholder="0000"
+            maxLength="6"
+            disabled={loading}
+          />
+
+          {otpError && <AlertBox>{otpError}</AlertBox>}
+
+          <ButtonGroup>
+            <Button
+              variant="secondary"
+              fullWidth
+              onClick={handleCloseModal}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="success"
+              fullWidth
+              onClick={handleOtpSubmit}
+              disabled={loading}
+            >
+              {loading ? 'Verifying...' : 'Verify'}
+            </Button>
+          </ButtonGroup>
+        </OTPContent>
+      </OTPModal>
+    </LoginContainer>
   );
 };
 

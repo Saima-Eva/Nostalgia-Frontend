@@ -353,18 +353,24 @@ useEffect(() => {
 
 
       <div className="rounded med scrollable medication-schedule">
-        <h4 className="headmed">Medication Schedule({moment().format('h:mm A')})</h4>
+        <div className="med-header-shell">
+          <div>
+            <p className="med-eyebrow">Medication dashboard</p>
+            <h4 className="headmed">Medication Schedule</h4>
+          </div>
+          <div className="med-clock-pill">{moment().format('h:mm A')}</div>
+        </div>
         {timebox.map((timeFrame, index) => (
-         <div className="m-2 row d-flex" key={index}>
-        <div className="row">
+         <div className="med-frame-card m-2 row d-flex" key={index}>
+        <div className="row align-items-center">
           <div className="col-md-6">
-         <h5>{timeFrame}</h5>
+         <h5 className="med-frame-title">{timeFrame}</h5>
          </div>
-        <div className="col-md-6 text-right">
+        <div className="col-md-6 text-right med-frame-action-wrap">
          {(timeFrame==time) ? (
          <input
                 type="checkbox"
-                className="form-check-input"
+                className="form-check-input med-done-toggle"
                 id={"done"}
                 checked={done}
                 onChange={() => handlenow()}
@@ -375,14 +381,22 @@ useEffect(() => {
           </div>
          {sortMedicationByNextTimeFrame().map((med, medIndex) => (
            med.times.includes(timeFrame) && (
-             <div className="col-md-4" key={medIndex}>
-               <Card className="mb-3">
-                 <Card.Img src={`${api.url}:8000/${med.image}`} className="card-img-top" alt="Medication" style={{  height: '100px' }} />
-                 <Card.Body>
-                   <Card.Title>{med.name}</Card.Title>
-                   <Card.Text>Dosage: {med.dosage}</Card.Text>
-                   <Card.Text>Take: {med.after}</Card.Text>
-                 </Card.Body>
+             <div className="col-12 med-card-column" key={medIndex}>
+               <Card className="mb-3 med-medication-card">
+                 <div className="med-card-layout">
+                   <div className="med-card-image-wrap">
+                     <Card.Img src={`${api.url}:8000/${med.image}`} className="med-card-image" alt="Medication" />
+                   </div>
+                   <Card.Body className="med-card-body">
+                     <div className="med-card-topline">
+                       <span className="med-time-chip">{timeFrame}</span>
+                       <span className="med-dose-chip">{med.after}</span>
+                     </div>
+                     <Card.Title className="med-card-title">{med.name}</Card.Title>
+                     <Card.Text className="med-card-text">Dosage: {med.dosage}</Card.Text>
+                     <Card.Text className="med-card-badge">Take: {med.after}</Card.Text>
+                   </Card.Body>
+                 </div>
                </Card>
              </div>
            )
@@ -392,10 +406,14 @@ useEffect(() => {
       </div>
 
       <div className="med scrollable notes rounded">
-  <h4 className="note">Notes</h4>
+        <div className="med-subheader-shell">
+          <h4 className="note">Notes</h4>
+          <span className="med-subheader-count">Live updates</span>
+        </div>
   {sortMedicationByNextTimeFrame().map((note, index) => (
-    note.note !== null && (
-      <div className="med notes m-2" key={index}>
+    note.note && note.note.toString().trim() !== '' && (
+            <div className="med-note-card m-2" key={index}>
+              <span className="med-note-pill">Note</span>
         <h5>{note.name}</h5>
         <p>{note.note}</p>
       </div>
@@ -403,7 +421,10 @@ useEffect(() => {
   ))}
 </div>
 <div className="med addmed rounded scrollbox">
-      <h4 className="m-1 headmed">Add Medication</h4>
+      <div className="med-subheader-shell">
+        <h4 className="m-1 headmed">Add Medication</h4>
+        <span className="med-subheader-count">Quick entry</span>
+      </div>
       <div className="m-1 form-group">
         <label className="m-1">Medication Name</label>
         <input
@@ -495,7 +516,7 @@ useEffect(() => {
 </div>
 
       
-      <button className="m-1 btn btn-primary" onClick={handleAddMedication}>Add Medication</button>
+      <button className="m-1 btn med-primary-button" onClick={handleAddMedication}>Add Medication</button>
       </div>
           </div>
           <div className="modal" style={{ display: showModal ? 'block' : 'none' }}>
@@ -550,7 +571,7 @@ useEffect(() => {
   </div>
 </div>
         <div className="fixed-bottom d-flex justify-content-end m-3">
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>Set Alert Time</button>
+        <button className="btn med-alert-button" onClick={() => setShowModal(true)}>Set Alert Time</button>
         </div>
     </div>
   )

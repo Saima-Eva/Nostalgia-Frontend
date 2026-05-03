@@ -4,6 +4,7 @@ import './FindFriend.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
 import axios from 'axios';
+import api from '../../../util/api';
 const FindFlist = ({fndlist,setfndlist,fetchData}) => {
   const [searchText, setSearchText] = useState('');
   const [searchWithImages, setSearchWithImages] = useState(false);
@@ -22,7 +23,7 @@ const handleSearch = async (e) => {
       }
 
       // API endpoint
-      const url = 'https://example.com/search';
+      const url = `${api.url}:8000/api/searchfnd`;
 
       const response = await axios.post(url, formData, {
         headers: {
@@ -72,11 +73,9 @@ const handleSearch = async (e) => {
     <h1 className="text-dark" rounded> People Matches You....</h1>
 
         {fndlist.map((fnd)=>(
-             <div className="d-inline-flex p-4">
+             <div key={fnd.id} className="d-inline-flex p-4">
 
             <FindF 
-            fndlist={fndlist}
-            setfndlist={setfndlist}
             fnd ={fnd}
             fetchData={fetchData}
             />

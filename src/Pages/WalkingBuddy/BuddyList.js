@@ -172,50 +172,50 @@ const BuddyList = () => {
             <h1 className="toto">Buddy List</h1>
           </div>
           <div className="col-6">
-            <div className={`modal fade ${showInputBoxModal ? 'show d-block' : 'd-none'}`} tabIndex="-1" role="dialog">
-              <div className="modal-dialog " role="document">
-                <div className="modal-content bg-light">
-                  <div className="modal-header">
-                    <h5 className="modal-title">Walking List</h5>
-                    <button type="button" className="close" onClick={() => setShowInputBoxModal(false)}>
-                      <span>&times;</span>
-                    </button>
+            <Modal show={showInputBoxModal} onHide={() => setShowInputBoxModal(false)} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+              <Modal.Header closeButton className="bg-primary text-white border-0 planner-modal-header" style={{ padding: '1.25rem 1.5rem' }}>
+                <Modal.Title className="fs-5 fw-bold"><i className="fas fa-walking me-2"></i>Create Walk</Modal.Title>
+              </Modal.Header>
+              <Modal.Body className="planner-modal-body" style={{ padding: '1.5rem 2rem' }}>
+                <form id="walk-create-form" onSubmit={handleSubmit} className="planner-form">
+                  <div className="planner-form-grid">
+                    <div className="planner-field">
+                      <label htmlFor="walk_name" className="planner-label">Walk Name</label>
+                      <input type="text" className="form-control planner-input" id="walk_name" value={formData.walk_name} onChange={handleChange} required />
+                    </div>
+                    <div className="planner-field">
+                      <label htmlFor="address" className="planner-label">Address</label>
+                      <input type="text" className="form-control planner-input" id="address" value={formData.address} onChange={handleChange} required />
+                    </div>
+                    <div className="planner-date-row">
+                      <div className="planner-field">
+                        <label htmlFor="walk_date" className="planner-label">Start Date</label>
+                        <input type="date" className="form-control planner-input" id="walk_date" value={formData.walk_date} onChange={handleChange} required />
+                      </div>
+                      <div className="planner-field">
+                        <label htmlFor="end_date" className="planner-label">End Date</label>
+                        <input type="date" className="form-control planner-input" id="end_date" value={formData.end_date} onChange={handleChange} required />
+                      </div>
+                    </div>
+                    <div className="planner-field">
+                      <label htmlFor="time" className="planner-label">Time</label>
+                      <input type="time" className="form-control planner-input" id="time" value={formData.time} onChange={handleChange} required />
+                    </div>
+                    <div className="planner-field">
+                      <label htmlFor="privacy" className="planner-label">Privacy</label>
+                      <select className="form-control planner-input" id="privacy" value={formData.privacy} onChange={handleChange}>
+                        <option value="Bondhu">Bondhu</option>
+                        <option value="Known">Known</option>
+                      </select>
+                    </div>
                   </div>
-                  <div className="modal-body">
-                    <form onSubmit={handleSubmit}>
-                      <div className="form-group">
-                        <label htmlFor="walk_name">Walk Name</label>
-                        <input type="text" className="form-control" id="walk_name" value={formData.walk_name} onChange={handleChange} />
-                      </div>
-                      <div className="form-group">
-                        <label htmlFor="address">Address</label>
-                        <input type="text" className="form-control" id="address" value={formData.address} onChange={handleChange} />
-                      </div>
-                      <div className="form-group">
-                        <label htmlFor="walk_date">Start Date</label>
-                        <input type="date" className="form-control" id="walk_date" value={formData.walk_date} onChange={handleChange} />
-                      </div>
-                      <div className="form-group">
-                        <label htmlFor="end_date">End Date</label>
-                        <input type="date" className="form-control" id="end_date" value={formData.end_date} onChange={handleChange} />
-                      </div>
-                      <div className="form-group">
-                        <label htmlFor="time">Time</label>
-                        <input type="time" className="form-control" id="time" value={formData.time} onChange={handleChange} />
-                      </div>
-                      <div className="form-group">
-                        <label htmlFor="privacy">Privacy</label>
-                        <select className="form-control" id="privacy" value={formData.privacy} onChange={handleChange}>
-                          <option value="Bondhu">Bondhu</option>
-                          <option value="Known">Known</option>
-                        </select>
-                      </div>
-                      <button type="submit" className="btn btn-primary mt-2">Save</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
+                </form>
+              </Modal.Body>
+              <Modal.Footer className="planner-modal-footer">
+                <Button variant="secondary" onClick={() => setShowInputBoxModal(false)}>Close</Button>
+                <Button type="submit" form="walk-create-form" className="mew">Save</Button>
+              </Modal.Footer>
+            </Modal>
             <div style={{ textAlign: 'right' }}>
               <Button className="mew" onClick={handleInputBoxButtonClick}>Add New Walk</Button>
             </div>
@@ -270,12 +270,12 @@ const BuddyList = () => {
           </tbody>
         </table>
 
-        <Modal show={showUserInfoModal} onHide={handleClose} dialogClassName="custom-modal">
+        <Modal show={showUserInfoModal} onHide={handleClose} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
           <div className="bg-light">
-            <Modal.Header closeButton>
-              <Modal.Title>User Info</Modal.Title>
+            <Modal.Header closeButton className="bg-primary text-white border-0" style={{ padding: '1.5rem' }}>
+              <Modal.Title className="fs-5 fw-bold"><i className="fas fa-user me-2"></i>Walk Details</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body style={{ padding: '2rem' }}>
               <Tabs defaultActiveKey="details">
                 {userData && selectedUser && userData.username === selectedUser.w_creator && (
                   <Tab eventKey="request" title="Request">
@@ -300,49 +300,56 @@ const BuddyList = () => {
                 </Tab>
               </Tabs>
             </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={handleClose}>Close</Button>
+            <Modal.Footer className="bg-light border-top" style={{ padding: '1rem 2rem' }}>
+              <Button variant="secondary" onClick={handleClose} className="fw-bold"><i className="fas fa-times me-2"></i>Close</Button>
             </Modal.Footer>
           </div>
         </Modal>
 
-        <Modal show={showEditBoxModal} onHide={() => setShowEditBoxModal(false)} dialogClassName="custom-modal">
+        <Modal show={showEditBoxModal} onHide={() => setShowEditBoxModal(false)} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
           <div className="bg-light">
-            <Modal.Header closeButton>
-              <Modal.Title>Edit Walk</Modal.Title>
+            <Modal.Header closeButton className="bg-warning text-white border-0 planner-modal-header" style={{ padding: '1.5rem' }}>
+              <Modal.Title className="fs-5 fw-bold"><i className="fas fa-edit me-2"></i>Edit Walk</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-              <form onSubmit={handleEditSubmit}>
-                <div className="form-group">
-                  <label htmlFor="walk_name">Walk Name</label>
-                  <input type="text" className="form-control" id="walk_name" value={formData.walk_name} onChange={handleChange} />
+            <Modal.Body className="planner-modal-body" style={{ padding: '2rem' }}>
+              <form id="walk-edit-form" onSubmit={handleEditSubmit} className="planner-form">
+                <div className="planner-form-grid">
+                  <div className="planner-field">
+                    <label htmlFor="walk_name" className="planner-label">Walk Name</label>
+                    <input type="text" className="form-control planner-input" id="walk_name" value={formData.walk_name} onChange={handleChange} required />
+                  </div>
+                  <div className="planner-field">
+                    <label htmlFor="address" className="planner-label">Address</label>
+                    <input type="text" className="form-control planner-input" id="address" value={formData.address} onChange={handleChange} required />
+                  </div>
+                  <div className="planner-date-row">
+                    <div className="planner-field">
+                      <label htmlFor="walk_date" className="planner-label">Start Date</label>
+                      <input type="date" className="form-control planner-input" id="walk_date" value={formData.walk_date} onChange={handleChange} required />
+                    </div>
+                    <div className="planner-field">
+                      <label htmlFor="end_date" className="planner-label">End Date</label>
+                      <input type="date" className="form-control planner-input" id="end_date" value={formData.end_date} onChange={handleChange} required />
+                    </div>
+                  </div>
+                  <div className="planner-field">
+                    <label htmlFor="time" className="planner-label">Time</label>
+                    <input type="time" className="form-control planner-input" id="time" value={formData.time} onChange={handleChange} required />
+                  </div>
+                  <div className="planner-field">
+                    <label htmlFor="privacy" className="planner-label">Privacy</label>
+                    <select className="form-control planner-input" id="privacy" value={formData.privacy} onChange={handleChange}>
+                      <option value="Bondhu">Bondhu</option>
+                      <option value="Known">Known</option>
+                    </select>
+                  </div>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="address">Address</label>
-                  <input type="text" className="form-control" id="address" value={formData.address} onChange={handleChange} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="walk_date">Start Date</label>
-                  <input type="date" className="form-control" id="walk_date" value={formData.walk_date} onChange={handleChange} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="end_date">End Date</label>
-                  <input type="date" className="form-control" id="end_date" value={formData.end_date} onChange={handleChange} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="time">Time</label>
-                  <input type="time" className="form-control" id="time" value={formData.time} onChange={handleChange} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="privacy">Privacy</label>
-                  <select className="form-control" id="privacy" value={formData.privacy} onChange={handleChange}>
-                    <option value="Bondhu">Bondhu</option>
-                    <option value="Known">Known</option>
-                  </select>
-                </div>
-                <button type="submit" className="btn btn-primary mt-2">Save</button>
               </form>
             </Modal.Body>
+            <Modal.Footer className="planner-modal-footer">
+              <Button variant="secondary" onClick={() => setShowEditBoxModal(false)}>Close</Button>
+              <Button type="submit" form="walk-edit-form" className="mew">Save</Button>
+            </Modal.Footer>
           </div>
         </Modal>
       </div>

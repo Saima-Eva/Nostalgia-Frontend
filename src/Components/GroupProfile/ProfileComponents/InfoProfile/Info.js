@@ -6,8 +6,7 @@ import WorkOutlineRoundedIcon from '@mui/icons-material/WorkOutlineRounded';
 import Info3 from '../../../../assets/Info-Dp/img-3.jpg';
 import { IoCameraOutline } from 'react-icons/io5';
 import { BiMessage, BiLogOut } from 'react-icons/bi';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserFriends } from '@fortawesome/free-solid-svg-icons';
+import { FaUserFriends } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import './Info.css';
 import { Modal, Tabs, Tab } from 'react-bootstrap';
@@ -205,28 +204,30 @@ console.log(editGroupData);
           </Link>
         ) : (
           <Button className="logout" onClick={handleModal} style={{ width: "150px" }}>
-            <FontAwesomeIcon icon={faUserFriends} />
+            <FaUserFriends />
             Members
           </Button>
         )}
-        <Modal show={showModal} onHide={handleModalBox} dialogClassName="custom-modal" >
-          <Modal.Header closeButton>
-            <Modal.Title>MemberList</Modal.Title>
+        <Modal show={showModal} onHide={handleModalBox} size="xl" fullscreen="lg-down" centered className="modal-xl-custom" backdrop="static" keyboard={false}>
+          <Modal.Header closeButton className="bg-primary text-white border-0" style={{ padding: '1.5rem' }}>
+            <Modal.Title className="fs-4 fw-bold"><i className="fas fa-users me-2"></i>Group Members</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-            <Tabs defaultActiveKey="request">
+          <Modal.Body style={{ padding: '2rem', maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+            <Tabs defaultActiveKey="members" className="mb-3">
               {group.admin==user.username && (
-                <Tab eventKey="request" title="Request">
-                  <RequestList fmembers={fmembers} members={members} fetchData={fetchData} Rmembers={Rmembers} setRmembers={setMembers} group={group} guser={group.username} />
+                <Tab eventKey="request" title={<span><i className="fas fa-hourglass-half me-2"></i>Requests</span>}>
+                  <div style={{ minHeight: '300px' }}>
+                    <RequestList fmembers={fmembers} members={members} fetchData={fetchData} Rmembers={Rmembers} setRmembers={setMembers} group={group} guser={group.username} />
+                  </div>
                 </Tab>
               )}
-              <Tab eventKey="members" title="Members">
+              <Tab eventKey="members" title={<span><i className="fas fa-users me-2"></i>Members ({members?.length || 0})</span>}>
                 <MemberList members={members} group={group} />
               </Tab>
             </Tabs>
           </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleModalBox}>Close</Button>
+          <Modal.Footer className="bg-light border-top" style={{ padding: '1rem 2rem' }}>
+            <Button variant="secondary" onClick={handleModalBox} className="fw-bold"><i className="fas fa-times me-2"></i>Close</Button>
           </Modal.Footer>
         </Modal>
 
@@ -237,7 +238,7 @@ console.log(editGroupData);
           </button>
         ) : (
           <button onClick={group.member === 1 ? handleMember : handleJoin}>
-            <FontAwesomeIcon icon={faUserFriends} />
+            <FaUserFriends />
             {group.admin === user.username ? ("Edit Group") : group.member === 1 ? (
               "Joined"
             ) : (group.accept == 1 ? "Request Sent" :
@@ -246,11 +247,11 @@ console.log(editGroupData);
           </button>
         )}
       </div>
-      <Modal show={showEditModal} onHide={handleEditModalBox} dialogClassName="custom-modal">
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Group</Modal.Title>
+      <Modal show={showEditModal} onHide={handleEditModalBox} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+        <Modal.Header closeButton className="bg-warning text-white border-0" style={{ padding: '1.5rem' }}>
+          <Modal.Title className="fs-5 fw-bold"><i className="fas fa-edit me-2"></i>Edit Group</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{ padding: '2rem' }}>
           <form onSubmit={handleEditFormSubmit}>
           <div className="form-group">
               <label htmlFor="groupName">Group Name</label>

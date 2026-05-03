@@ -9,7 +9,10 @@ const sendGetRequest = (relativeUrl) => {
     .then(ApiUtils.statusHandler)
     .then(ApiUtils.jsonHandler)
     .then((data) => data)
-    .catch((error) => false);
+    .catch((error) => {
+      console.error('GET Request Error:', error);
+      throw error;
+    });
 };
 
 
@@ -36,7 +39,10 @@ const sendPostRequest = (relativeUrl, requestBody, isAuth, isFormData) => {
     .then(ApiUtils.statusHandler)
     .then(ApiUtils.jsonHandler)
     .then((data) => data)
-    .catch((error) => false);
+    .catch((error) => {
+      console.error('POST Request Error:', error);
+      throw error;
+    });
 };
 
 const ApiConnector = {
