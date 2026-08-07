@@ -203,7 +203,7 @@ const Overseer = () => {
           </div>
         </div>
       ))}
-     <Modal show={showAdditionalModal} onHide={() => setShowAdditionalModal(false)} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+    <Modal show={showAdditionalModal} onHide={() => setShowAdditionalModal(false)} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false} dialogClassName="overseer-modal" contentClassName="overseer-modal-content">
         <Modal.Header closeButton className="bg-primary text-white border-0" style={{ padding: '1.5rem' }}>
           <Modal.Title className="fs-5 fw-bold"><i className="fas fa-plus-circle me-2"></i>Add Additional Info</Modal.Title>
         </Modal.Header>
@@ -233,7 +233,7 @@ const Overseer = () => {
       </Modal>
 
 
-      <Modal show={showModal} onHide={handleCloseModal} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+      <Modal show={showModal} onHide={handleCloseModal} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false} dialogClassName="overseer-modal" contentClassName="overseer-modal-content">
         <Modal.Header closeButton className="bg-primary text-white border-0" style={{ padding: '1.5rem' }}>
           <Modal.Title className="fs-5 fw-bold"><i className="fas fa-user-plus me-2"></i>Add Overseer</Modal.Title>
         </Modal.Header>
@@ -280,7 +280,7 @@ const Overseer = () => {
         </Modal.Footer>
       </Modal>
 
-      <Modal show={showViewModal} onHide={handleCloseViewModal} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false}>
+      <Modal show={showViewModal} onHide={handleCloseViewModal} size="lg" fullscreen="lg-down" centered backdrop="static" keyboard={false} dialogClassName="overseer-modal" contentClassName="overseer-modal-content">
         <Modal.Header closeButton className="bg-info text-white border-0" style={{ padding: '1.5rem' }}>
           <Modal.Title className="fs-5 fw-bold"><i className="fas fa-user me-2"></i>View Overseer</Modal.Title>
         </Modal.Header>
